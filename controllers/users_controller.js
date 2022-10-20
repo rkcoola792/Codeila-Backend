@@ -3,10 +3,12 @@ module.exports.profile = function (req, res) {
   res.render("profile", { title: "Profile" });
 };
 
+// function for sign up
 module.exports.signUp = function (req, res) {
   return res.render("user_sign_up", { title: "Codeial || Sign Up" });
 };
 
+// function for sign up
 module.exports.signIn = function (req, res) {
   return res.render("user_sign_in", { title: "Codeial || Sign In" });
 };
@@ -35,6 +37,7 @@ module.exports.create = function (req, res) {
   });
 };
 
+//sign in and create session for the user 
 module.exports.createSession = function (req, res) {
-  // ?tod
+  return res.redirect("/");
 };
