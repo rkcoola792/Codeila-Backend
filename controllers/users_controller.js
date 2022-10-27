@@ -5,14 +5,22 @@ module.exports.profile = function (req, res) {
 
 // function for sign up
 module.exports.signUp = function (req, res) {
+  if (req.isAuthenticated()) {
+    return res.redirect("/users/profile");
+  }
   return res.render("user_sign_up", { title: "Codeial || Sign Up" });
 };
 
-// function for sign up
+// function for sign In
 module.exports.signIn = function (req, res) {
+  // to check if the user is authenticated do not let him to sign in or signup again
+  if (req.isAuthenticated()) {
+    return res.redirect("/users/profile");
+  }
   return res.render("user_sign_in", { title: "Codeial || Sign In" });
 };
 
+// get the sign up data
 module.exports.create = function (req, res) {
   if (req.body.password != req.body.confirm_password) {
     return res.redirect("back");
@@ -37,7 +45,16 @@ module.exports.create = function (req, res) {
   });
 };
 
-//sign in and create session for the user 
+//sign in and create session for the user
 module.exports.createSession = function (req, res) {
   return res.redirect("/");
+};
+
+module.exports.destroySession = function (req, res, next) {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
 };

@@ -11,6 +11,7 @@ passport.use(
       usernameField: "email",
     },
     function (email, password, done) {
+      console.log("hey there into passport");
       // find a user and establish the identity
       User.findOne({ email: email }, function (err, user) {
         if (err) {
@@ -23,6 +24,7 @@ passport.use(
           console.log("Inavalid User Name or Password ");
           return done(null, false);
         }
+        console.log("User found");
         return done(null, user);
       });
     }
@@ -40,9 +42,29 @@ passport.deserializeUser(function (id, done) {
     if (err) {
       console.log("error in finding the user --> Passport");
       //   to report an error to passport
-      return done(err); 
+      return done(err);
     }
+    return done(null, user);
   });
 });
+
+// check if the user is authenticated
+passport.checkAuthentication = function (req, res, next) {
+  // if the user is signed in then pass on the request to the next function(controller's action)
+  if (req.isAuthenticated()) {
+    return next();
+  }
+
+  // if the user is not signed in
+  return res.redirect("/users/sign-in");
+};
+
+passport.setAuthenticatedUser = function (req, res, next) {
+  if (req.isAuthenticated()) {
+    // req.user contains the current signed in user from the ssession cookie and we are just sending this to locals from the views
+    res.locals.user = req.user;
+  }
+  next();
+};
 
 module.exports = passport;
