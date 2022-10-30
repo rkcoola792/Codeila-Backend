@@ -25,13 +25,15 @@ module.exports.create = function (req, res) {
   if (req.body.password != req.body.confirm_password) {
     return res.redirect("back");
   }
-
+// to find an entry in the USer collection
   User.findOne({ email: req.body.email }, function (err, user) {
     if (err) {
       console.log("error in finding user in signing up");
       return;
     }
     if (!user) {
+
+      // to create a new entry
       User.create(req.body, function (err, user) {
         if (err) {
           console.log("error in creating user while signing up");
