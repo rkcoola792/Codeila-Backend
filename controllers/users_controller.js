@@ -1,6 +1,22 @@
 const User = require("../model/user");
+
 module.exports.profile = function (req, res) {
-  res.render("profile", { title: "Profile" });
+  User.findById(req.params.id, function (err, user) {
+    console.log("User in profile ",user)
+    return res.render("test", { title: "Profile", profile_user: user });
+  });
+};
+
+module.exports.update = function (req, res) {
+  if (req.user.id == req.params.id) {
+    User.findByIdAndUpdate(req.params.id, req.body, function (err, user) {
+      return res.redirect("back");
+    });
+   
+  }
+  else{
+    return res.status(401).send("Unauthorized")
+  }
 };
 
 // function for sign up
@@ -25,14 +41,13 @@ module.exports.create = function (req, res) {
   if (req.body.password != req.body.confirm_password) {
     return res.redirect("back");
   }
-// to find an entry in the USer collection
+  // to find an entry in the USer collection
   User.findOne({ email: req.body.email }, function (err, user) {
     if (err) {
       console.log("error in finding user in signing up");
       return;
     }
     if (!user) {
-
       // to create a new entry
       User.create(req.body, function (err, user) {
         if (err) {
