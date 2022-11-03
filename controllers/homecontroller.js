@@ -1,8 +1,8 @@
-const { name } = require("ejs");
-const { populate } = require("../model/post");
+// const { name } = require("ejs");
+// const { populate } = require("../model/post");
 const Post = require("../model/post");
 
-module.exports.home = async function (req, res) {
+module.exports.home = function (req, res) {
   // console.log(req.cookies);
   // res.cookie("name", "Kumar");
   // Post.find({}, function (err, posts) {
@@ -10,15 +10,17 @@ module.exports.home = async function (req, res) {
   // });
 
   // populate the user of each posts
-   Post.find({})
+  Post.find({})
     .populate({ path: "user" })
     .populate({
-      path:"comment",
-      populate:{
-        path:"user"}
+      path: "comment",
+      populate: {
+        path: "user",
+      },
     })
     .exec(function (err, posts) {
-      console.log("line 16", posts);
-      return res.render("home", { title: "Codeial||Home", posts: posts });
+      // console.log("line 16", posts);
+      // res.status(200).json({ posts });
+      res.render("home", { title: "Codeial||Home", posts: posts });
     });
 };
