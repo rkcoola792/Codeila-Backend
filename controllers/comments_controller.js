@@ -34,10 +34,12 @@ module.exports.destroy = function(req, res){
     Comment.findById(req.params.id, function(err, comment){
         if (comment.user == req.user.id){
 
+          // saving the post id first of the comment before deleting it
             let postId = comment.post;
 
             comment.remove();
 
+          // Finding the comment in the post and pulling out the desired comment from post comment's array
             Post.findByIdAndUpdate(postId, { $pull: {comments: req.params.id}}, function(err, post){
                 return res.redirect('back');
             })

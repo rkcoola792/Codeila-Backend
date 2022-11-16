@@ -1,21 +1,22 @@
 const User = require("../model/user");
 
 module.exports.profile = function (req, res) {
+  // finding a particular user and showing his profile
   User.findById(req.params.id, function (err, user) {
-    console.log("User in profile ",user)
-    return res.render("test", { title: "Profile", profile_user: user });
+    console.log("User in profile ", user);
+    return res.render("profile", { title: "Profile", profile_user: user });
   });
 };
 
 module.exports.update = function (req, res) {
   if (req.user.id == req.params.id) {
     User.findByIdAndUpdate(req.params.id, req.body, function (err, user) {
+      req.flash("success", "Updated")
       return res.redirect("back");
     });
-   
-  }
-  else{
-    return res.status(401).send("Unauthorized")
+  } else {
+    req.flash('error', 'Unauthorized!');
+    return res.status(401).send("Unauthorized");
   }
 };
 
@@ -64,14 +65,18 @@ module.exports.create = function (req, res) {
 
 //sign in and create session for the user
 module.exports.createSession = function (req, res) {
+  req.flash("success", "Logged in successfully");
   return res.redirect("/");
 };
 
 module.exports.destroySession = function (req, res, next) {
+  
+  // passport function to logout
   req.logout(function (err) {
     if (err) {
       return next(err);
     }
+    req.flash("success", "You have logged out");
     res.redirect("/");
   });
 };
