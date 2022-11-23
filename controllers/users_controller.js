@@ -8,17 +8,73 @@ module.exports.profile = function (req, res) {
   });
 };
 
-module.exports.update = function (req, res) {
+// module.exports.update = async function (req, res) {
+  // if (req.user.id == req.params.id) {
+  //   User.findByIdAndUpdate(req.params.id, req.body, function (err, user) {
+  //     req.flash("success", "Updated")
+  //     return res.redirect("back");
+  //   });
+  // } else {
+  //   req.flash('error', 'Unauthorized!');
+  //   return res.status(401).send("Unauthorized");
+  // }
+
+//   if (req.user.id == req.params.id) {
+//     try {
+//       let user = await User.findById(req.params.id);
+//       User.uploadedAvatar(req, res, function (err) {
+//         if (err) {
+//           console.log("Mullter error", err);
+//         }
+//         console, log(req.file);
+//       });
+
+//     } catch (err) {
+//       req.flash("Error", err);
+//       return res.redirect("back");
+//     }
+//   } else {
+//     req.flash("error", "Unauthorized!");
+//     return res.status(401).send("Unauthorized");
+//   }
+// };
+module.exports.update = async function (req, res) {
+
   if (req.user.id == req.params.id) {
-    User.findByIdAndUpdate(req.params.id, req.body, function (err, user) {
-      req.flash("success", "Updated")
-      return res.redirect("back");
-    });
-  } else {
-    req.flash('error', 'Unauthorized!');
-    return res.status(401).send("Unauthorized");
-  }
-};
+      try {
+
+          let user = await User.findById(req.params.id);
+          User.uploadedAvatar(req, res, function (err) {
+              if (err) {
+                  console.log('******Multer Eroor: ', err)
+              }
+              // console.log(req.file);
+              user.name = req.body.name;
+              user.email = req.body.email;
+
+              if (req.file) {
+
+                  //if the avatar is already present and to replace it with the new one , and to not store multiple avatar
+                  if (user.avatar) {
+                      fs.unlinkSync(path.join(__dirname, '..', user.avatar));
+                  }
+                  user.avatar = User.avatarPath + '/' + req.file.filename;
+              }
+              user.save();
+              return res.redirect('back');
+          });
+      } 
+      catch (err) {
+        req.flash('error', err);
+        return res.redirect('back');
+    }
+
+} else {
+    req.flash('error', 'Unauthorised');
+    return res.status(401).send('Unauthorized');
+}
+}
+
 
 // function for sign up
 module.exports.signUp = function (req, res) {
@@ -70,7 +126,6 @@ module.exports.createSession = function (req, res) {
 };
 
 module.exports.destroySession = function (req, res, next) {
-  
   // passport function to logout
   req.logout(function (err) {
     if (err) {

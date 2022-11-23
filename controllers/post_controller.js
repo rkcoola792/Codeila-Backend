@@ -10,6 +10,7 @@ module.exports.create = async function (req, res) {
       user: req.user._id,
     });
 
+    // to check the data is in AJAX request
     if (req.xhr) {
       console.log(res.createdAt)
       return res.status(200).json({
@@ -39,6 +40,16 @@ module.exports.destroy = async function (req, res) {
       post.remove();
 
       await Comment.deleteMany({ post: req.params.id });
+// to check if the request is ajax
+      if(req.xhr){
+        return res.status(200).json({
+          data:{
+            post_id:req.pararms.id
+          },message:"Post deleted succesfully"
+
+        })
+        
+      }
       req.flash("success", "Post deleted");
       return res.redirect("back");
     } else {

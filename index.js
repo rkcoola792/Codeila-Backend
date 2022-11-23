@@ -24,8 +24,9 @@ app.use(
   })
 );
 app.use(expressLayouts);
-app.use(express.urlencoded());
+app.use(express.urlencoded({extended:false}));
 app.use(cookieParser());
+app.use('/uploads',express.static(__dirname + '/uploads'));
 
 // extract style and scripts frrom subpages ino the layout
 app.set("layout extractStyles", true);
