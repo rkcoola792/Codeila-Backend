@@ -12,7 +12,7 @@ const customMware=require("./config/middleware")
 const session = require("express-session");
 const passport = require("passport");
 const passportLocal = require("./config/passport_local_strategy");
-const MongoStore = require("connect-mongo");
+const MongoStore = require("connect-mongodb-session")(session);
 
 app.use(
   sassMiddleware({
@@ -49,7 +49,7 @@ app.use(
       maxAge: 1000 * 60 * 100,
     },
     // mongstore
-    store: MongoStore.create(
+    store: MongoStore(
       {
         mongoUrl: `mongodb://localhost/codeial_development`,
         autoRemove: "disabled",
