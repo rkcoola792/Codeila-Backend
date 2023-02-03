@@ -6,6 +6,7 @@ const expressLayouts = require("express-ejs-layouts");
 const db = require("./config/mongoose");
 const sassMiddleware = require("node-sass-middleware");
 const flash=require("connect-flash")
+const passportJWT=require("./config/passport-jwt-strategy")
 const customMware=require("./config/middleware")
 
 // used for session cookie
